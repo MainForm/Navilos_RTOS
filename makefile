@@ -5,7 +5,7 @@ TARGET = realview-pb-a8
 
 CC = arm-none-eabi-gcc
 AS = arm-none-eabi-as
-LD = arm-none-eabi-ld
+LD = arm-none-eabi-gcc
 OC = arm-none-eabi-objcopy
 
 GDB = gdb-multiarch
@@ -34,6 +34,7 @@ INC_DIRS =	-I include		 \
 			-I lib
 
 CFLAGS = -c -g -std=c11
+LDFLAGS = -nostartfiles -nostdlib -nodefaultlibs -static -lgcc
 
 navilos = build/navilos.axf
 navilos_bin = build/navilos.bin
@@ -55,7 +56,7 @@ gdb:
 	$(GDB)
 
 $(navilos): $(ASM_OBJS) $(C_OBJS) $(LINKER_SCRPT)
-	$(LD) -n -T $(LINKER_SCRIPT) -o $(navilos) $(ASM_OBJS) $(C_OBJS) -Map=$(MAP_FILE)
+	$(LD) -n -T $(LINKER_SCRIPT) -o $(navilos) $(ASM_OBJS) $(C_OBJS) -Wl,-Map=$(MAP_FILE) $(LDFLAGS)
 	$(OC) -O binary $(navilos) $(navilos_bin)
 
 build/%.os: %.S
